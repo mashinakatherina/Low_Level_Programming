@@ -8,7 +8,13 @@ exit:
 
 ; Принимает указатель на нуль-терминированную строку, возвращает её длину
 string_length:
-    xor rax, rax
+    xor rax, rax 
+    .loop:
+      cmp  byte[rdi + rax], 0 
+      je   .exit 
+      inc  rax 
+      jmp  .loop
+    .exit:
     ret
 
 ; Принимает указатель на нуль-терминированную строку, выводит её в stdout
@@ -18,13 +24,19 @@ print_string:
 
 ; Принимает код символа и выводит его в stdout
 print_char:
-    xor rax, rax
+    push rdi 
+    mov rsi, rsp ; адрес вершины стэка
+    mov rdi, 1 ; куда выводить (stdout)
+    mov rdx, 1 ; сколько выводить
+    mov rax, 1 ; код sys_write
+    syscall
+    pop rdi ; забираем символ со стэка
     ret
 
 ; Переводит строку (выводит символ с кодом 0xA)
 print_newline:
-    xor rax, rax
-    ret
+    mov rdi, 10 
+    jmp print_char 
 
 ; Выводит беззнаковое 8-байтовое число в десятичном формате 
 ; Совет: выделите место в стеке и храните там результаты деления
