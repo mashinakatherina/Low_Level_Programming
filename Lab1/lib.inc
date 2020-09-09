@@ -61,19 +61,19 @@ print_uint:
     mov rax, rdi ; сохраним переданное чило в rax
     dec rsp
     mov byte[rsp], 0 ; dec+mov - "руками" делаем однобайтовый pop
-	   .loop:
-        dec rsp ; двигаем указатель
-        xor rdx, rdx ; обнуляем rdx
-        div  r13 ; делим на 10, остаток в rdx
-        add rdx, 0x30 ; переводим в ASCII
-        mov  byte[rsp], dl ; сохраняем в стeк
-        test rax, rax ; установит ZF = 0, если rax = 0
-        jz .print ; если ZF - 0, заканчиваем
-        jmp .loop
-	   .print:
-    mov rdi, rsp ; аргумент для print_string
-    call print_string ; выводим число в stdout
-    mov rsp, r12						
+	.loop:
+		dec rsp ; двигаем указатель
+		xor rdx, rdx ; обнуляем rdx
+		div  r13 ; делим на 10, остаток в rdx
+		add rdx, 0x30 ; переводим в ASCII
+		mov  byte[rsp], dl ; сохраняем в стeк
+		test rax, rax ; установит ZF = 0, если rax = 0
+		jz .print ; если ZF - 0, заканчиваем
+		jmp .loop
+	.print:
+	 mov rdi, rsp ; аргумент для print_string
+	 call print_string ; выводим число в stdout
+	 mov rsp, r12						
  pop r13
  pop r12 ; восстановим регистры
  ret
@@ -84,14 +84,14 @@ print_int:
 													; rdi - переданное число
          mov rax, rdi ; сохраняем в rax
          test rax, rax ; установим флаги
-         jns .not_minus ; если отрицательное, то пицем знак '-'
+         jns .plus ; если отрицательное, то пишем знак '-'
          mov  rdi, '-' ; помещаем минус для print_char
          push rax
          call print_char ; выводим минус
          pop rax
          neg rax ; приводим к положительному
          mov rdi, rax
-         .not_minus:
+         .plus:
          call print_uint ; выводим число 
          ret
 
