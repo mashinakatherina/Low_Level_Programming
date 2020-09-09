@@ -56,43 +56,43 @@ print_uint:
 ; rsp - голова стека, rdi - переданное число
     push r12
     push r13
-    mov r12, rsp									; сохраним вершину стека в r12
-    mov r13, 10										; сохраним основание системы счисления для деления
-    mov rax, rdi									; сохраним переданное чило в rax
+    mov r12, rsp ; сохраним вершину стека в r12
+    mov r13, 10 ; сохраним основание системы счисления для деления
+    mov rax, rdi ; сохраним переданное чило в rax
     dec rsp
-    mov byte[rsp], 0								; dec+mov - "руками" делаем однобайтовый pop
+    mov byte[rsp], 0 ; dec+mov - "руками" делаем однобайтовый pop
 	   .loop:
-        dec rsp										; двигаем указатель
-        xor rdx, rdx								; обнуляем rdx
-        div  r13 									; делим на 10, остаток в rdx
-        add rdx, 0x30								; переводим в ASCII
-        mov  byte[rsp], dl 							; сохраняем в стeк
-        test rax, rax								; установит ZF = 0, если rax = 0
-        jz .print									; если ZF - 0, заканчиваем
+        dec rsp ; двигаем указатель
+        xor rdx, rdx ; обнуляем rdx
+        div  r13 ; делим на 10, остаток в rdx
+        add rdx, 0x30 ; переводим в ASCII
+        mov  byte[rsp], dl ; сохраняем в стeк
+        test rax, rax ; установит ZF = 0, если rax = 0
+        jz .print ; если ZF - 0, заканчиваем
         jmp .loop
 	   .print:
-    mov rdi, rsp 									; аргумент для print_string
-    call print_string 								; выводим число в stdout
+    mov rdi, rsp ; аргумент для print_string
+    call print_string ; выводим число в stdout
     mov rsp, r12						
  pop r13
- pop r12 										; восстановим регистры
+ pop r12 ; восстановим регистры
  ret
 
 ; Выводит знаковое 8-байтовое число в десятичном формате 
 print_int:
      xor rax, rax
 													; rdi - переданное число
-         mov rax, rdi									; сохраняем в rax
-         test rax, rax									; установим флаги
-         jns .not_minus									; если отрицательное, то пицем знак '-'
-         mov  rdi, '-'  									; помещаем минус для print_char
+         mov rax, rdi ; сохраняем в rax
+         test rax, rax ; установим флаги
+         jns .not_minus ; если отрицательное, то пицем знак '-'
+         mov  rdi, '-' ; помещаем минус для print_char
          push rax
-         call print_char									; выводим минус
+         call print_char ; выводим минус
          pop rax
-         neg rax											; приводим к положительному
+         neg rax ; приводим к положительному
          mov rdi, rax
          .not_minus:
-         call print_uint									; выводим число 
+         call print_uint ; выводим число 
          ret
 
 ; Принимает два указателя на нуль-терминированные строки, возвращает 1 если они равны, 0 иначе
