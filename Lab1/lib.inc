@@ -6,8 +6,9 @@ section .text
  
 ; Принимает код возврата и завершает текущий процесс
 exit: 
-    xor rax, rax,
-    ret 
+    xor rdi, rdi
+    mov rax, 60
+    syscall
 
 ; Принимает указатель на нуль-терминированную строку, возвращает её длину
 string_length:
