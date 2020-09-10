@@ -1,3 +1,6 @@
+section .data
+	buf : times 256 db 0
+
 section .text
  
  
