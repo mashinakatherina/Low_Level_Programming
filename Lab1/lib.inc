@@ -189,7 +189,6 @@ read_word:
 ; Возвращает в rax: число, rdx : его длину в символах
 ; rdx = 0 если число прочитать не удалось
 parse_uint:
-parse_uint:
     xor rax, rax
 	xor rsi, rsi
     mov r8, 10
