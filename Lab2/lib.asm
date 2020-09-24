@@ -1,240 +1,249 @@
+section .data
+	buf : times 256 db 0
+
 section .text
 
 global string_length
-global string_equals
-global string_copy
 global print_string
-global print_uint
 global print_char
+global print_newline
+global print_uint
 global print_int
-global parse_uint
-global parse_int
+global string_equals
 global read_char
 global read_word
-global print_newline
+global parse_uint
+global parse_int
+global string_copy
 
+; принимает указатель на строку, возвращает её длину. rax - счетчик
 string_length:
-    xor rax, rax									; обнуляем rax
-	.loop:
-		cmp byte[rdi + rax], 0 						; установит ZF = 0, только если [rdi + rax] = 0
-		je .exit 									; если ZF == 0, заканчиваем цикл 
-		inc rax 									; увеличиваем счетчик
-		jmp .loop
-	.exit:
-   ret
-
-   
-print_string:
-	mov rsi, rdi									; адрес строки
-	call string_length								; считаем длинну строки, помещаем ее в rax
-	mov rdx, rax									; помещаем в rdx длинну строки
-	mov rax, 1 										; номер системного вызова write
-	mov rdi, r15									; дескриптор, который передаем через r15
-	syscall
-    ret
-
-
-print_char:
-    xor rax, rax
-	push rsi										; сохраним rsi
-	push rdi										; помещаем в char стек
-	mov rsi, rsp 									; адрес строки
-	mov rdx, 1										; длинна строки (1)
-	mov rax, 1 										; номер системного вызова write
-	mov rdi, r15									; дескриптор, который мы храним в r15
-	syscall
-	pop rsi											; восстановим rsi
-	add rsp, 8										; добавим 8 байт в rsp => уменьшим адрес стека => вернем регистр в изначальное состояние
-    ret
-
-print_newline:
-    xor rax, rax
-	mov rdi, 0xA
-	call print_char
-    ret
-
-
-print_uint:
-													; rsp - голова стека, rdi - переданное число
-	push r12
-	push r13
-	mov r12, rsp									; сохраним вершину стека в r12
-	mov r13, 10										; сохраним основание системы счисления для деления
-	mov rax, rdi									; сохраним переданное чило в rax
-	dec rsp
-	mov byte[rsp], 0								; dec+mov - "руками" делаем однобайтовый pop
-	.loop:
-		dec rsp										; сдвигаем указатель
-		xor rdx, rdx								; обнуляем rdx
-		div  r13 									; делим на 10, остаток в rdx
-		add rdx, 0x30								; переводим в ASCII
-		mov  byte[rsp], dl 							; сохраняем в стeк
-		test rax, rax								; установит ZF = 0, если rax = 0
-		jz .print									; если ZF == 0, заканчиваем деление
-		jmp .loop
-	.print:
-	mov rdi, rsp 									; аргумент для print_string
-	call print_string 								; выводим число в stdout
-	mov rsp, r12						
-    pop r13
-    pop r12 										; восстановим регистры
-    ret
-
-
-print_int:
-    xor rax, rax
-													; rdi - переданное число
-	mov rax, rdi									; сохраняем в rax
-	test rax, rax									; установим флаги
-	jns .not_minus									; если отрицательное, то пицем знак '-'
-	mov  rdi, '-'  									; помещаем минус для print_char
-	push rax
-	call print_char									; выводим минус
-	pop rax
-	neg rax											; приводим к положительному
-	mov rdi, rax
-	.not_minus:
-	call print_uint									; выводим число 
+	xor rax, rax ; обнуляем аккумулятор
+.loop:
+	cmp byte[rax + rdi], 0 		; идем туда, где лежит строка
+	je .exit					; пустая строка - выход
+	inc rax						; увеличиваем счетчик
+	jmp .loop
+.exit:
 	ret
 
-	
-string_equals:										; rdi - одна строка, rsi - другая 
-    xor rax, rax
-	push r10
-	push r13
+;-------------------------------------------
+
+; принимает указатель на нуль-терминированную строку, выводит её в stdout
+print_string:
+	mov rsi, rdi 				; откуда выводить
+	call string_length
+	mov rdi, r13 				; куда вывод - смотрим по содержимому r13
+	mov rdx, rax 				; длина строки - в счетчике
+	mov rax, 1 					; номер системного вызова write
+	syscall
+	xor rax, rax				; чистим аккумулятор
+	ret
+
+;-------------------------------------------
+
+; принимает код символа и выводит его в stdout
+print_char:
+	push rdi 					; положили символ на стек
+	mov rsi, rsp 				; индекс источника - вершина стека
+	mov rdi, r13 				; куда вывод - stdout
+	mov rdx, 1 					; длина строки - 1
+	mov rax, 1 					; номер системного вызова write
+	syscall
+	pop rdi						; возвращаем стек как было
+ret
+
+;-------------------------------------------
+
+; перевод на новую строку (0xA)
+print_newline:
+	mov rdi, 10 				; кладем в нужный регистр значение конца строки
+	call print_char
+	xor rax, rax
+ret
+
+;-----------------------------------------—
+
+; вывод беззнакового 8-байтового числа в десятичной с/с
+; Совет: выделите место в стеке и храните там результаты деления
+; Не забудьте перевести цифры в их ASCII коды.
+print_uint:
+	push r11 					; кладем значение на стек
+	mov r11, rsp 				; сохраняем в r11 адрес вершины стека
+	mov rax, rdi 				; сохраняем полученное число в аккумулятор
+	mov rdi, 10 				; заносим делитель в rdi
+	sub rsp, 256 				; выделяем место в стеке
+	dec r11 					; выделяем место под 0 на вершине стэка (нультермируем для вывода)
+	mov byte[r11], 0 			; кладем 0 на вершину стека
+.loop:
+	dec r11 					; сдвигаем метку для следующей цифры
+	xor rdx, rdx 				; обнуление rdx
+	div rdi 					; целочисленное деление на 10, остаток - в rdx
+	add rdx, '0' 				; перевод
+	mov byte[r11], dl 			; сохраняем 1 цифру на стек
+	test rax, rax				; установка флагов
+	jnz .loop					; если rax !=0, продолжает цикл
+	mov rdi, r11				; помещаем аргумент для print_string
+	call print_string
+	add rsp, 256				; возвращаем буфер как было 
+	pop r11						; восстанавливаем значение регистра
+	ret
+
+;-----------------------------------------—
+
+; вывод знакового 8-байтового числа в десятичной с/с
+; Выводит знаковое 8-байтовое число в десятичном формате
+print_int:
+	xor rax, rax
+	test rdi, rdi 				; установка флагов
+	jns print_uint 				; если положительное - вывести
+	push rdi 					; сохранить переданное число
+	mov rdi, '-' 				; запись минуса в rdi
+	call print_char 			; вывести минус
+	pop rdi 
+	neg rdi 					; делаем положительное число
+	jmp print_uint
+
+;-----------------------------------------—
+
+; принимает 2 указателя на строки, сравнивает посимвольно.
+; Возвращает 1, если равны, иначе 0
+string_equals:					; rdi - одна строка, rsi - другая 
+    xor rax, rax 				; чистим аккумулятор
+	push r10 					; сохраняем значения
+	push r14
 	loop:
-		mov r10b, byte[rsi]
-		mov r13b, byte[rdi]
+		mov r10b, byte[rsi]		; в r10 - адрес строки 
+		mov r14b, byte[rdi]		; в r14 - адрес строки 
 		inc rsi
 		inc rdi
-		cmp r10b, r13b
+		cmp r10b, r14b			; сравниваем + флаги
 		jne ret_zero
-		cmp r13b, 0
+		cmp r14b, 0
 		jne loop
 		inc rax
 	ret_zero:
-		pop r13
+		pop r14 				; восстанавливаем регистры
 		pop r10
 		ret
+;-----------------------------------------—
 
-
+; прочитать с потока ввода один символ
 read_char:
-	push rdi
-	push rdx
-	dec rsp
-	xor rax, rax 										; код системного вызова
-	xor rdi, rdi									; дескриптор stdin
-	mov rdx, 1										; длинна слова
-	mov rsi, rsp									; указатель на начало (и конец)
+	dec rsp 					; сюда пишем символ
+	mov rax, 0 					; код системного вызова sys_read
+	mov rdx, 1 					; читаем 1 символ
+	mov rdi, 0 					; откуда ввод - stdin
+	mov rsi, rsp 				; указатель на начало (и конец)
 	syscall
-	test rax, rax
-	je .return
-    xor rax, rax
-	mov al, [rsp]									; сохраним в младший байт rax
-.return:
-    inc rsp
-	pop rdx
-	pop rdi
-    ret 
+	mov rax, [rsp] 				; сохраняем символ в rax
+	inc rsp 					; указатель стека - на место
+	ret
+	
+;-----------------------------------------—
 
+; прочитать с потока ввода следующее слово, пропустив перед ним произвольное кол-во пробельных символов
+; rax - указатель на буфер, rdx - длина прочитанного слова
 read_word:
-													; rdi - куда записываем, rsi - длинна строки 
-	push r13										; сохраняем регистры r13, r14
-    push r14
-    xor r14, r14
-    mov r10, rsi
-    mov r13, rdi
-	sp_loop:										; пропускаем все пробелы в начале
-		call read_char								
-		cmp al, 0x20		
-		jne write_char								; начинаем записывать слово
-		jmp sp_loop
-	read_next:
-		call read_char		
-		cmp al, 0x20 ; space
-		je read_end
-	write_char:
-		cmp al, 0xA
-		je read_end
-		cmp al, 0x0
-		je read_end
-		mov byte [r13 + r14], al
-		inc r14
-		cmp r14, r10
-		je read_out
-		jmp read_next
-	read_end:
-		mov rax, r13
-		mov byte [r13 + r14], 0
-		mov rdx, r14
-		jmp return
-	read_out:
-		xor rax, rax
-		xor rdx, rdx
-	return:
-		pop r14
-		pop r13		
+	push rbx 					; сохраняем значение rbx
+	mov r8, rsi 				; сохраняем размер буфера
+	mov r9, rdi 				; сохраняем адрес буфера
+	xor rbx, rbx 				; обнуление счетчика длины
+	xor rdi, rdi 				; откуда ввод - stdin
+	mov rdx, 1 					; читаем 1 символ
+.skip:
+	xor rax, rax 				; код системного вызова sys_read
+	mov rsi, buf 				; заносим адрес, куда будем считавать
+	syscall
+	cmp al, 0 					; сравниваем с концом строки
+	je .finally 				; если равно, переходим к завершению
+	cmp byte[buf], 0x21 		; сравниваем с кодом последнего 'плохого' символа
+	jb .skip 					; если меньше, пропускаем его
+	inc rbx 					; иначе учитываем
+.read:
+	xor rax, rax 				; код системного вызова sys_read
+	lea rsi, [buf + rbx] 		; записываем эффективный адрес в rsi (откуда читаем)
+	syscall
+	cmp byte [buf + rbx], 0x21 	; сравниваем c последним не нужным символом
+	jb .finally 				; если меньше (значит символ нам не нужен), -> завершаем чтение
+	cmp r8, rbx 				; иначе проверяем умещается ли очередной символ
+	jbe .exit 					; если нет, возвращаем 0
+	inc rbx 					; иначе учитываем символ
+	jmp .read 					; и читаем следующий
+.finally:	mov byte[buf + rbx], 0 	; нультермируем строку в буфере
+	mov rdx, rbx 				; возвращаем длину строки
+	mov rax, buf 				; возвращаем указатель на буфер
+	pop rbx 					; восстанавливаем значение rbx
+	ret
+.exit:
+	xor rdx, r8 				; записываем длину буфера (=сколько считали символов)
+	xor rax, rax 				; возвращаем 0
+	pop rbx 					; восстанавливаем значение rbx
+	ret
+;-------------------------------------------
+
+; принимает указатель на строку, пытается
+; прочитать из её начала беззнаковое число.
+; Возвращает в rax: число, rdx : его длину в символах
+; rdx = 0 если число прочитать не удалось
+parse_uint:
+	mov rax, 0
+	mov rsi, 0 
+	mov rcx, 0
+	mov rdx, 0 
+	mov r11, 10 
+
+.loop:
+	mov sil, [rdi+rcx] 			; перемещаем символ
+	cmp sil, '0' 				; проверяем, что этот символ цифра
+	jl .return					; если нет - выход
+	cmp sil, '9' 				; проверяем, что этот символ цифра
+	jg .return 					; если нет - выход
+	inc rcx
+	sub sil, '0' 				; преобразование символа в число
+	mul r11						; умножаем на 10 + добавляем
+	add rax, rsi
+	jmp .loop
+.return:
+	mov rdx, rcx
 	ret
 
-; rdi points to a string
-; returns rax: number, rdx : length
-parse_uint:
-	push r13
-	mov r13, 10
-    xor rax, rax
-	xor rcx, rcx
-	xor rdx, rdx
-	xor rsi, rsi
-	parse_char:
-		mov sil, [rdi + rcx]
-		cmp sil, 0x30
-		jl .return
-		cmp sil, 0x39
-		jg .return
-		inc rcx
-		sub sil, 0x30
-		mul r13
-		add rax, rsi
-		jmp parse_char
-	.return:
-		mov rdx, rcx
-		pop r13
-		ret
+;-----------------------------------------—
 
-; rdi points to a string
-; returns rax: number, rdx : length
+; принимает указатель на строку, пытается
+; прочитать из её начала знаковое число.
+; Если есть знак, пробелы между ним и числом не разрешены.
+; Возвращает в rax: число, rdx : его длину в символах (включая знак, если он был) 
+; rdx = 0 если число прочитать не удалось
 parse_int:
-    xor rax, rax
-    cmp byte [rdi], 0x2d
-    je parse_ng
-    call parse_uint
-    ret
-parse_ng:
-    inc rdi
-    call parse_uint
-    cmp rdx, 0
-    je .return
-    neg rax
-    inc rdx
-.return:
-    ret 
+	cmp byte[rdi], '-' 			; знак - минус?
+	jne parse_uint 				; нет - ищем число
+	inc rdi 					; двигаемся по строке
+	call parse_uint 
+	neg rax						; делаем положительное число
+	inc rdx 					; увеличиваем счетчик
+	ret
 
+;-------------------------------------------
 
+; принимает указатель на строку, указатель на буфер и длину буфера
+; Копирует строку в буфер
+; Возвращает длину строки если она умещается в буфер, иначе 0
 string_copy:
-														; в rsi- указатель куда, в rdi - указатель откуда, rdx - длинна строки
-	xor rcx, rcx										; обнуляем счетчик
-	push r13											; сохраним значение регистра
-	.loop:
-		cmp rcx, rdx									; сравниваем счетчик и количество символов в строке
-		je .too_long										; если все символы скопированы - выходим
-		mov r13, [rdi + rcx]							; сохраним в r13 текущий символ
-		mov [rsi + rcx], r13							; скопируем
-		cmp r13, 0
-		je .exit
-		inc rcx											; увеличиваем счетчик
-		jmp .loop
-	.too_long:
-		mov rax, 0
-	.exit:
-		pop r13												; вернем значение r13	
-		ret
+; в rsi- указатель куда, в rdi - указатель откуда, rdx - длинна строки
+	xor rcx, rcx 				; обнуляем счетчик
+	push r11 					; сохраним значение регистра
+.loop:
+	cmp rcx, rdx 				; сравниваем счетчик и количество символов в строке
+	jz .complete 				; если все символы скопированы - выходим
+	mov r11, [rdi + rcx] 		; сохраним в r11 текущий символ
+	mov [rsi + rcx], r11 		; скопируем
+	cmp r11, 0
+	je .exit
+	inc rcx 					; увеличиваем счетчик
+	jmp .loop
+.complete:
+	mov rax, 0
+.exit:
+	pop r11 					; вернем значение r11
+	ret
