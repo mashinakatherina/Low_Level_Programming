@@ -13,8 +13,8 @@ outside of this object file!
 
 2. Create a file colon.inc and define a colon macro there to create dictionary words.
 This macro will take two arguments:
-•	 Dictionary key (inside quotes).
-•	 Assembly label name. Keys can contain spaces and other characters, which are not
+* Dictionary key (inside quotes).
+*	 Assembly label name. Keys can contain spaces and other characters, which are not
 allowed in label names.
 Each entry should start with a pointer to the next entry, then hold a key as a nullterminated string. The content is then directly described by a programmer—for
 example, using db directives, as in the example shown in Listing 5-35.
@@ -32,6 +32,6 @@ returns record address.
 macro. Include it in main.asm.
 
 5. A simple _start function. It should perform the following actions:
-• Read the input string in a buffer of maximum 255 characters long.
-• Try to find this key in dictionary. If found, print the corresponding value. If not,
+* Read the input string in a buffer of maximum 255 characters long.
+* Try to find this key in dictionary. If found, print the corresponding value. If not,
 print an error message.
