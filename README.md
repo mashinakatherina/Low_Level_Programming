@@ -4,7 +4,7 @@
 
 В этом задании вы реализована библиотека процедур, которые будут выполнять простые действия со строками, числами и их текстовыми представлениями.
 
-<h3 align=center> <a href="Lab1">Лабораторная работа №1 : словарь на Assembler</a> </h3>
+<h3 align=center> <a href="Lab1">Лабораторная работа №2 : словарь на Assembler</a> </h3>
 
 1. Make a separate assembly file containing functions that you have already written
 in the first assignment. We will call it lib.o.
