@@ -38,7 +38,7 @@ print an error message.
 
 <h3 align=center> <a href="Lab3">Лабораторная работа №3 : скалярное произведение векторов и проверка напростоту чисел</a> </h3>
 
-##Assignment: Scalar Product
+#Assignment: Scalar Product
 
 A scalar product of two vectors
 The solution should consist of:
@@ -46,7 +46,7 @@ The solution should consist of:
 *	 A function to compute the scalar product of two given arrays.
 *	 A main function which calls the product computations and outputs its results.
 
-##Assignment: Prime Number Checker
+#Assignment: Prime Number Checker
 
 You have to write a function to test the number for primarity. The interesting thing is that the number will be
 of the type unsigned long and that it will be read from stdin.
