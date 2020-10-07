@@ -61,6 +61,11 @@ int scalar( const int a[], const int b[], size_t vectorSize ) {
 int prime_int(int x) {
 	
 int i;
+
+if (x == 0 || x == 1|| x == 2){
+	return 0;
+}
+	
 if (x%2 == 0 || x == 1){
 	return 1;
 }
