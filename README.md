@@ -37,15 +37,20 @@ macro. Include it in main.asm.
 print an error message.
 
 <h3 align=center> <a href="Lab3">Лабораторная работа №3 : скалярное произведение векторов и проверка напростоту чисел</a> </h3>
-#Assignment: Scalar Product
-A scalar product of two vectors 
-The solution should consist of
+
+##Assignment: Scalar Product
+
+A scalar product of two vectors
+The solution should consist of:
 *	 Two global arrays of int of the same size.
 *	 A function to compute the scalar product of two given arrays.
 *	 A main function which calls the product computations and outputs its results.
-#Assignment: Prime Number Checker
+
+##Assignment: Prime Number Checker
+
 You have to write a function to test the number for primarity. The interesting thing is that the number will be
 of the type unsigned long and that it will be read from stdin.
+
 *	 You have to write a function int is_prime( unsigned long n ), which checks
 whether n is a prime number or not. If it is the case, the function will return 1;
 otherwise 0.
