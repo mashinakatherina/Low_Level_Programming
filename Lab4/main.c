@@ -7,35 +7,35 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-static void print_space(int64_t);
+void print_space(int64_t);
 
-static void print_new(int64_t);
+void print_new(int64_t);
 
-static int64_t square(int64_t);
+int64_t square(int64_t);
 
-static int64_t cube(int64_t);
+int64_t cube(int64_t);
 
-static int64_t summa(int64_t x, int64_t a);
+int64_t multiply(int64_t x, int64_t a);
 
-static int64_t twoTimes(int64_t x);
+int64_t twoTimes(int64_t x);
 
-static void basic_test(struct LinkedList *list);
+void basic_test(struct LinkedList *list);
 
-static struct LinkedList *initial(void);
+struct LinkedList *initial(void);
 
-static void foreach_test(struct LinkedList *list);
+void foreach_test(struct LinkedList *list);
 
-static void map_test(struct LinkedList *list);
+void map_test(struct LinkedList *list);
 
-static void map_mut_test(struct LinkedList *list);
+void map_mut_test(struct LinkedList *list);
 
-static void foldl_test(struct LinkedList *list);
+void foldl_test(struct LinkedList *list);
 
-static struct LinkedList *iterate_test(void);
+struct LinkedList *iterate_test(void);
 
-static void file_test(struct LinkedList **list);
+void file_test(struct LinkedList **list);
 
-static void file_bin_test(struct LinkedList **list);
+void file_bin_test(struct LinkedList **list);
 
 
 enum status {
@@ -46,7 +46,7 @@ enum status {
     ErrorInLoading
 };
 
-static struct LinkedList *initial(void) {
+struct LinkedList *initial(void) {
     int64_t digit;
     struct LinkedList *list;
 
@@ -60,14 +60,14 @@ static struct LinkedList *initial(void) {
     return list;
 }
 
-static void foreach_test(struct LinkedList *list) {
+void foreach_test(struct LinkedList *list) {
     puts("foreach with spaces");
     foreach(list, print_space);
     puts("\nforeach with new line");
     foreach(list, print_new);
 }
 
-static void basic_test(struct LinkedList *list) {
+void basic_test(struct LinkedList *list) {
     int64_t second = list_get(list, 2);
     size_t len = list_length(list);
     struct LinkedList *third = list_node_at(list, 3);
@@ -82,7 +82,7 @@ static void basic_test(struct LinkedList *list) {
     }
 }
 
-static void file_test(struct LinkedList **iter) {
+void file_test(struct LinkedList **iter) {
     puts("saving in file");
     if (!save(*iter, "myfile")) {
         puts("file_error");
@@ -105,7 +105,7 @@ static void file_test(struct LinkedList **iter) {
 
 }
 
-static void file_bin_test(struct LinkedList **iter) {
+void file_bin_test(struct LinkedList **iter) {
     puts("serialization");
     if (!serialize(*iter, "./myfilebin.bin")) {
         puts("bin file error");
@@ -127,7 +127,7 @@ static void file_bin_test(struct LinkedList **iter) {
 
 }
 
-static struct LinkedList *iterate_test(void) {
+struct LinkedList *iterate_test(void) {
     struct LinkedList *iter = iterate(1, 10, twoTimes);
     puts("iteration");
     foreach(iter, print_space);
@@ -135,19 +135,19 @@ static struct LinkedList *iterate_test(void) {
     return iter;
 }
 
-static void foldl_test(struct LinkedList *list) {
-    int64_t su = foldl(0, list, summa);
+void foldl_test(struct LinkedList *list) {
+    int64_t su = foldl(0, list, multiply);
     printf("foldl sum-> %"PRId64"\n", su);
 }
 
-static void map_mut_test(struct LinkedList *list) {
+void map_mut_test(struct LinkedList *list) {
     map_mut(&list, imaxabs);
     puts("map_mut abs");
     foreach(list, print_space);
     puts("");
 }
 
-static void map_test(struct LinkedList *list) {
+void map_test(struct LinkedList *list) {
     struct LinkedList *squares = map(list, square);
     struct LinkedList *cubes = map(list, cube);
 
@@ -163,29 +163,30 @@ static void map_test(struct LinkedList *list) {
     list_free(cubes);
 }
 
-static void print_space(int64_t i) {
+void print_space(int64_t i) {
     printf("%" PRId64 " ", i);
 }
 
-static void print_new(int64_t i) {
+void print_new(int64_t i) {
     printf("%" PRId64 "\n", i);
 }
 
-static int64_t square(int64_t x) {
+int64_t square(int64_t x) {
     return x * x;
 }
 
-static int64_t cube(int64_t x) {
+int64_t cube(int64_t x) {
     return x * x * x;
 }
 
-static int64_t summa(int64_t x, int64_t a) {
-    return x + a;
+int64_t multiply(int64_t x, int64_t a) {
+    return x * a;
 }
 
-static int64_t twoTimes(int64_t x) {
+int64_t twoTimes(int64_t x) {
     return 2 * x;
 }
+
 int main() {
     struct LinkedList *list = initial();
 
