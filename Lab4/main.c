@@ -17,7 +17,7 @@ static int64_t cube(int64_t);
 
 static int64_t summa(int64_t x, int64_t a);
 
-static int64_t two(int64_t);
+static int64_t twoTimes(int64_t x);
 
 static void basic_test(struct LinkedList *list);
 
@@ -45,32 +45,6 @@ enum status {
     ErrorInSaving,
     ErrorInLoading
 };
-
-int main() {
-    struct LinkedList *list = initial();
-
-    basic_test(list);
-
-    foreach_test(list);
-
-    map_test(list);
-
-    map_mut_test(list);
-
-    foldl_test(list);
-
-    struct LinkedList *iter = iterate_test();
-
-    file_test(&iter);
-
-    file_bin_test(&iter);
-
-    list_free(list);
-
-    list_free(iter);
-    return Ok;
-}
-
 
 static struct LinkedList *initial(void) {
     int64_t digit;
@@ -104,7 +78,7 @@ static void basic_test(struct LinkedList *list) {
                second,
                third->value);
     } else {
-        puts("something went wrong with list_node_at or list_get");
+        puts("Exception in list_node_at or list_get");
     }
 }
 
@@ -154,7 +128,7 @@ static void file_bin_test(struct LinkedList **iter) {
 }
 
 static struct LinkedList *iterate_test(void) {
-    struct LinkedList *iter = iterate(1, 10, two);
+    struct LinkedList *iter = iterate(1, 10, twoTimes);
     puts("iteration");
     foreach(iter, print_space);
     puts("");
@@ -209,6 +183,30 @@ static int64_t summa(int64_t x, int64_t a) {
     return x + a;
 }
 
-static int64_t two(int64_t x) {
+static int64_t twoTimes(int64_t x) {
     return 2 * x;
+}
+int main() {
+    struct LinkedList *list = initial();
+
+    basic_test(list);
+
+    foreach_test(list);
+
+    map_test(list);
+
+    map_mut_test(list);
+
+    foldl_test(list);
+
+    struct LinkedList *iter = iterate_test();
+
+    file_test(&iter);
+
+    file_bin_test(&iter);
+
+    list_free(list);
+
+    list_free(iter);
+    return Ok;
 }

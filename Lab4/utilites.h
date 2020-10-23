@@ -17,3 +17,4 @@ bool serialize(struct LinkedList *list, const char *filename);
 bool deserialize(struct LinkedList **list, const char *filename);
 
 #endif
+
