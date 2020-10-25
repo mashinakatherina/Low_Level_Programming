@@ -58,3 +58,36 @@ otherwise 0.
 it. Then, depending on its result, it will output either yes or no.
 Read man scanf and use scanf function with the format specifier `%lu`.
 Remember, `is_prime` accepts unsigned long, which is not the same thing as unsigned int!
+
+<h3 align=center> <a href="Lab4">Лабораторная работа №4 : Linked list + Функции высшихз порядков</a> </h3>
+
+#10.6.1 Assignment 
+The program accepts an arbitrary number of integers through stdin. What you have to do is 1. Save them all in a linked list in reverse order. 
+2. Write a function to compute the sum of elements in a linked list. 
+3. Use this function to compute the sum of elements in the saved list.
+4. Write a function to output the n-th element of the list. If the list is too short, signal about it. 
+5. Free the memory allocated for the linked list. 
+
+You need to learn to use 
+* Structural types to encode the linked list itself. 
+* The EOF constant. Read the section “Return value” of the man scanf. You can be sure that
+* The input does not contain anything but integers separated by whitespaces. 
+* All input numbers can be contained into int variables. Following is the recommended list of functions to implement: 
+* `list_create` – accepts a number, returns a pointer to the new linked list node. 
+* `list_add_front` – accepts a number and a pointer to a pointer to the linked list. Prepends the new node with a number to the list. For example: a list (1,2,3), a number 5, and the new list is (5,1,2,3). 
+* `list_add_back`, adds an element to the end of the list. The signature is the same as list_add_front. 
+* `list_get` gets an element by index, or returns 0 if the index is outside the list bounds. 
+* `list_free` frees the memory allocated to all elements of list. 
+* `list_length` accepts a list and computes its length. 
+* `list_node_at` accepts a list and an index, returns a pointer to struct list, corresponding to the node at this index. If the index is too big, returns NULL. 
+* `list_sum` accepts a list, returns the sum of elements.
+
+#11.7.1 Common Higher-Order Functions 
+In this assignment, we are going to implement several higher-order functions on linked lists, which should be familiar to those used to functional programming paradigm. T
+hese functions are known under the names foreach, map, map_mut, and foldl. 
+* `foreach` accepts a pointer to the list start and a function (which returns void and accepts an int). It launches the function on each element of the list. 
+* `map` accepts a function f and a list. It returns a new list containing the results of the f applied to all elements of the source list. The source list is not affected. For example, f (x) = x + 1 will map the list (1, 2, 3) into (2, 3, 4). 
+* `map_mut` does the same but changes the source list. 
+* `foldl` is a bit more complicated. It accepts: – The accumulator starting value. – A function f (x, a). – A list of elements. It returns a value of the same type as the accumulator, computed in the following way: 1. We launch f on accumulator and the first element of the list. The result is the new accumulator value a′. 2. We launch f on a′ and the second element in list. The result is again the new accumulator value a′′. 3. We repeat the process until the list is consumed. In the end the final accumulator value is the final result. For example, let’s take f (x, a) = x * a. By launching foldl with the accumulator value 1 and this function we will compute the product of all elements in the list. 
+* `iterate` accepts the initial value s, list length n, and function f. It then generates a list of length n as follows   
+
