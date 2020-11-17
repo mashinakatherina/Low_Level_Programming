@@ -38,7 +38,7 @@ print an error message.
 
 <h3 align=center> <a href="Lab3">Лабораторная работа №3 : скалярное произведение векторов и проверка напростоту чисел</a> </h3>
 
-#Assignment: Scalar Product
+##### Assignment: Scalar Product
 
 A scalar product of two vectors
 The solution should consist of:
@@ -46,7 +46,7 @@ The solution should consist of:
 *	 A function to compute the scalar product of two given arrays.
 *	 A main function which calls the product computations and outputs its results.
 
-#Assignment: Prime Number Checker
+##### Assignment: Prime Number Checker
 
 You have to write a function to test the number for primarity. The interesting thing is that the number will be
 of the type unsigned long and that it will be read from stdin.
@@ -61,7 +61,8 @@ Remember, `is_prime` accepts unsigned long, which is not the same thing as unsig
 
 <h3 align=center> <a href="Lab4">Лабораторная работа №4 : Linked list + Функции высшихз порядков</a> </h3>
 
-#10.6.1 Assignment 
+##### 10.6.1 Assignment 
+
 The program accepts an arbitrary number of integers through stdin. What you have to do is 1. Save them all in a linked list in reverse order. 
 2. Write a function to compute the sum of elements in a linked list. 
 3. Use this function to compute the sum of elements in the saved list.
@@ -82,7 +83,8 @@ You need to learn to use
 * `list_node_at` accepts a list and an index, returns a pointer to struct list, corresponding to the node at this index. If the index is too big, returns NULL. 
 * `list_sum` accepts a list, returns the sum of elements.
 
-#11.7.1 Common Higher-Order Functions 
+#### 11.7.1 Common Higher-Order Functions 
+
 In this assignment, we are going to implement several higher-order functions on linked lists, which should be familiar to those used to functional programming paradigm. T
 hese functions are known under the names foreach, map, map_mut, and foldl. 
 * `foreach` accepts a pointer to the list start and a function (which returns void and accepts an int). It launches the function on each element of the list. 
@@ -93,9 +95,11 @@ hese functions are known under the names foreach, map, map_mut, and foldl.
 
 <h3 align=center> <a href="Lab6">Лабораторная работа №6 : Поворот картинки</a> </h3>
 
-#13.10 Assignment: Image Rotation
+#### 13.10 Assignment: Image Rotation
+
 You have to create a program to rotate a BMP image of any resolution to 90 degrees clockwise.
-#13.10.1 BMP 
+#### 13.10.1 BMP
+
 File Format BMP (BitMaP) format is a raster graphics format, which means that it stores an image as a table of colored dots (pixels). In this format the color is encoded with numbers of a fixed size (can be 1, 4, 8, 16, or 24 bits). If 1 bit is used per pixel, the image is black and white. If 24 bits are used, the number of different colors possible is roughly 16 million. We only implement the rotation of 24-bit images. The subset of BMP files that your program should be able to work with is described by the structure shown in Listing 13-16. It represents the file header, followed immediately by the pixel data.
 Architecture
 We want to think about program architecture that is extensible and modular.
@@ -105,3 +109,12 @@ To achieve that, define a structure structure image to store the pixel array (co
 3. Separate file opening from its reading.
 4. Make error handling unified and handle errors in exactly one place (for this very program it is enough). To achieve that, define the from_bmp function, which will read a file from the stream and will return one of the codes that show whether the operation completed successfully or not.
 Remember the flexibility concerns. Your code should be easy to use in applications with graphical user interface (GUI) as well as in those without GUI at all, so throwing prints into stderr all over the place is not a good option: restrict them to the error handling piece of code. Your code should be easily adaptable for different input formats as well.
+
+<h3 align=center> <a href="Lab7">Лабораторная работа №7 : malloc & free</a> </h3>
+
+##### 13.11 Assignment: Custom Memory Allocator
+
+In this assignment, we are going to implement our own version of `malloc` and `free` based on the memory
+mapping system call `mmap` and a linked list of chunks of arbitrary sizes. It can be viewed as a simplified
+version of a memory manager typical for the standard C library and shares most of its weaknesses.
+For this assignment, the usage of `malloc`/`calloc`, `free` and `realloc` is forbidden
