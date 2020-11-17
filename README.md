@@ -38,7 +38,7 @@ print an error message.
 
 <h3 align=center> <a href="Lab3">Лабораторная работа №3 : скалярное произведение векторов и проверка напростоту чисел</a> </h3>
 
-##### Assignment: Scalar Product
+#### Assignment: Scalar Product
 
 A scalar product of two vectors
 The solution should consist of:
@@ -46,7 +46,7 @@ The solution should consist of:
 *	 A function to compute the scalar product of two given arrays.
 *	 A main function which calls the product computations and outputs its results.
 
-##### Assignment: Prime Number Checker
+#### Assignment: Prime Number Checker
 
 You have to write a function to test the number for primarity. The interesting thing is that the number will be
 of the type unsigned long and that it will be read from stdin.
@@ -61,7 +61,7 @@ Remember, `is_prime` accepts unsigned long, which is not the same thing as unsig
 
 <h3 align=center> <a href="Lab4">Лабораторная работа №4 : Linked list + Функции высшихз порядков</a> </h3>
 
-##### 10.6.1 Assignment 
+#### 10.6.1 Assignment 
 
 The program accepts an arbitrary number of integers through stdin. What you have to do is 1. Save them all in a linked list in reverse order. 
 2. Write a function to compute the sum of elements in a linked list. 
@@ -112,7 +112,7 @@ Remember the flexibility concerns. Your code should be easy to use in applicatio
 
 <h3 align=center> <a href="Lab7">Лабораторная работа №7 : malloc & free</a> </h3>
 
-##### 13.11 Assignment: Custom Memory Allocator
+#### 13.11 Assignment: Custom Memory Allocator
 
 In this assignment, we are going to implement our own version of `malloc` and `free` based on the memory
 mapping system call `mmap` and a linked list of chunks of arbitrary sizes. It can be viewed as a simplified
