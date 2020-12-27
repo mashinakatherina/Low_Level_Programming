@@ -105,3 +105,18 @@ To achieve that, define a structure structure image to store the pixel array (co
 3. Separate file opening from its reading.
 4. Make error handling unified and handle errors in exactly one place (for this very program it is enough). To achieve that, define the from_bmp function, which will read a file from the stream and will return one of the codes that show whether the operation completed successfully or not.
 Remember the flexibility concerns. Your code should be easy to use in applications with graphical user interface (GUI) as well as in those without GUI at all, so throwing prints into stderr all over the place is not a good option: restrict them to the error handling piece of code. Your code should be easily adaptable for different input formats as well.
+
+
+<h3 align=center> <a href="Lab7">Лабораторная работа №7 : malloc & free</a> </h3>
+
+##### 13.11 Assignment: Custom Memory Allocator
+
+In this assignment, we are going to implement our own version of `malloc` and `free` based on the memory
+mapping system call `mmap` and a linked list of chunks of arbitrary sizes. It can be viewed as a simplified
+version of a memory manager typical for the standard C library and shares most of its weaknesses.
+For this assignment, the usage of `malloc`/`calloc`, `free` and `realloc` is forbidden
+
+<h3 align=center> <a href="Lab8">Лабораторная работа №8 : Sepia</a> </h3>
+
+In this assignment, we will create a program to perform a sepia filter on an image. A sepia filter makes an image with vivid
+colors look like an old, aged photograph. Most graphical editors include a sepia filter.
